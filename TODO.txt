@@ -1,0 +1,10 @@
+Sanction Management
+- Violation Category Setup
+- Incident Report Generation
+Behavior Monitoring
+- Behavior Points Monitoring
+- Reformation Program Assignment
+Disciplinary Hearing Schedule
+Infraction Logging
+Clearance Hold Flagging
+Parent Notification Tool
