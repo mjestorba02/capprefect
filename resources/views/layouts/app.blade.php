@@ -55,7 +55,12 @@
                         <i class="fas fa-hands-helping"></i> Reformation Programs
                     </a>
                 </li>
-                <li><a href="#" class="menu-item"><i class="fas fa-calendar-alt"></i> Disciplinary Hearing Schedule</a></li>
+                <li>
+                    <a href="{{ route('hearings.index') }}" 
+                    class="menu-item {{ request()->routeIs('hearings*') ? 'active' : '' }}">
+                        <i class="fas fa-calendar-alt"></i> Disciplinary Hearing Schedule
+                    </a>
+                </li>
                 <li>
                     <a href="{{ route('infractions.index') }}" 
                     class="menu-item {{ request()->routeIs('infractions*') ? 'active' : '' }}">

@@ -13,6 +13,7 @@ use App\Http\Controllers\IncidentReportController;
 use App\Http\Controllers\ReformationProgramController;
 use App\Http\Controllers\InfractionController;
 use App\Http\Controllers\ClearanceHoldController;
+use App\Http\Controllers\HearingScheduleController;
 
 // Redirect to login
 Route::get('/', fn() => redirect()->route('login'));
@@ -60,3 +61,6 @@ Route::delete('/clearance_holds/{id}', [ClearanceHoldController::class, 'destroy
 // Special actions
 Route::post('/clearance_holds/flag', [ClearanceHoldController::class, 'flag'])->name('clearance_holds.flag');
 Route::post('/clearance_holds/{id}/lift', [ClearanceHoldController::class, 'lift'])->name('clearance_holds.lift');
+
+//Hearing Schedule
+Route::resource('hearings', HearingScheduleController::class);

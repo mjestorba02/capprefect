@@ -18,4 +18,9 @@ class Student extends Model
     public function sanctions() {
         return $this->hasMany(Sanction::class, 'student_id');
     }
+
+    public function hearings()
+    {
+        return $this->hasMany(HearingSchedule::class, 'respondent_id', 'student_id');
+    }
 }

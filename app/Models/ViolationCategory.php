@@ -17,4 +17,9 @@ class ViolationCategory extends Model
         'default_sanction',
         'status',
     ];
+
+    public function hearings()
+    {
+        return $this->hasMany(HearingSchedule::class, 'violation_id', 'id');
+    }
 }
