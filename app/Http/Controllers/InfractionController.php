@@ -12,13 +12,21 @@ class InfractionController extends Controller
     /**
      * Display all infractions and related data.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $infractions = Infraction::with('student')->latest()->paginate(10);
+        $query = Infraction::with('student')->latest();
+
+        // If a category filter is applied
+        if ($request->has('category') && $request->category != '') {
+            $query->where('violation_category', $request->category);
+        }
+
+        $infractions = $query->paginate(10);
         $students = Student::all();
         $categories = ViolationCategory::where('status', 'Active')->get();
 
-        return view('infractions.index', compact('infractions', 'students', 'categories'));
+        return view('infractions.index', compact('infractions', 'students', 'categories'))
+            ->with('selectedCategory', $request->category);
     }
 
     /**

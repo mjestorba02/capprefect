@@ -134,11 +134,11 @@
                     @endforeach
                 </select>
 
-                <label>Category</label>
+                <label>Violation Category</label>
                 <select name="category_id" required>
-                    <option value="">Select Category</option>
+                    <option value="">Select Violation Category</option>
                     @foreach($categories as $cat)
-                        <option value="{{ $cat->sanction_id }}">{{ $cat->sanction_id }} - {{ $cat->offense }}</option>
+                        <option value="{{ $cat->id }}">{{ $cat->category_name }} ({{ ucfirst($cat->severity_level) }})</option>
                     @endforeach
                 </select>
 

@@ -23,58 +23,86 @@
                 <h2>Prefect</h2>
                 <p>Student Management System</p>
             </div>
-            <ul class="sidebar-menu">
-                <li><a href="{{ route('dashboard') }}" class="menu-item"><i class="fas fa-chart-line"></i> Dashboard</a></li>
-                <li>
-                    <a href="{{ route('sanctions.index') }}" 
-                    class="menu-item {{ request()->routeIs('sanctions*') ? 'active' : '' }}">
-                    <i class="fas fa-gavel"></i> Sanction Management
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('violation_categories.index') }}" 
-                    class="menu-item {{ request()->routeIs('violation_categories*') ? 'active' : '' }}">
-                        <i class="fas fa-layer-group"></i> Violation Category Setup
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('incident_reports.index') }}" 
-                    class="menu-item {{ request()->routeIs('incident_reports*') ? 'active' : '' }}">
-                    <i class="fas fa-file-alt"></i> Incident Reports
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('behaviors.index') }}" 
-                    class="menu-item {{ request()->routeIs('behaviors*') ? 'active' : '' }}">
-                    <i class="fas fa-eye"></i> Behavior Monitoring
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('reformation_programs.index') }}" 
-                    class="menu-item {{ request()->routeIs('reformation_programs*') ? 'active' : '' }}">
-                        <i class="fas fa-hands-helping"></i> Reformation Programs
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('hearings.index') }}" 
-                    class="menu-item {{ request()->routeIs('hearings*') ? 'active' : '' }}">
-                        <i class="fas fa-calendar-alt"></i> Disciplinary Hearing Schedule
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('infractions.index') }}" 
-                    class="menu-item {{ request()->routeIs('infractions*') ? 'active' : '' }}">
-                        <i class="fas fa-exclamation-triangle"></i> Infraction Logging
-                    </a>
-                </li>
-                <li>
-                    <a href="{{ route('clearance_holds.index') }}" 
-                    class="menu-item {{ request()->routeIs('clearance_holds*') ? 'active' : '' }}">
-                        <i class="fas fa-ban"></i> Clearance Hold Flagging
-                    </a>
-                </li>
-                <li><a href="#" class="menu-item"><i class="fas fa-envelope-open-text"></i> Parent Notification Tool</a></li>
-            </ul>
+            <ul class="sidebar-menu list-unstyled">
+
+    <!-- Sanction Management Module -->
+    <li class="menu-module">
+        <a class="menu-item d-flex justify-content-between align-items-center" 
+           data-bs-toggle="collapse" 
+           href="#sanctionModule" 
+           role="button" 
+           aria-expanded="false" 
+           aria-controls="sanctionModule">
+            <span><i class="fas fa-gavel me-2"></i> Sanction Management</span>
+            <i class="fas fa-chevron-down submenu-icon"></i>
+        </a>
+        <ul class="collapse list-unstyled ps-4" id="sanctionModule">
+            <li>
+                <a href="{{ route('sanctions.index') }}" class="submenu-item {{ request()->routeIs('sanctions*') ? 'active' : '' }}">
+                    Sanctions
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('violation_categories.index') }}" class="submenu-item {{ request()->routeIs('violation_categories*') ? 'active' : '' }}">
+                    Violation Category Setup
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('incident_reports.index') }}" class="submenu-item {{ request()->routeIs('incident_reports*') ? 'active' : '' }}">
+                    Incident Report Generation
+                </a>
+            </li>
+        </ul>
+    </li>
+
+    <!-- Behavior Monitoring Module -->
+    <li class="menu-module">
+        <a class="menu-item d-flex justify-content-between align-items-center" 
+           data-bs-toggle="collapse" 
+           href="#behaviorModule" 
+           role="button" 
+           aria-expanded="false" 
+           aria-controls="behaviorModule">
+            <span><i class="fas fa-eye me-2"></i> Behavior Monitoring</span>
+            <i class="fas fa-chevron-down submenu-icon"></i>
+        </a>
+        <ul class="collapse list-unstyled ps-4" id="behaviorModule">
+            <li>
+                <a href="{{ route('behaviors.index') }}" class="submenu-item {{ request()->routeIs('behaviors*') ? 'active' : '' }}">
+                    Behavior Points Monitoring
+                </a>
+            </li>
+            <li>
+                <a href="{{ route('reformation_programs.index') }}" class="submenu-item {{ request()->routeIs('reformation_programs*') ? 'active' : '' }}">
+                    Reformation Program Assignment
+                </a>
+            </li>
+        </ul>
+    </li>
+
+    <!-- Other Modules (no dropdown) -->
+    <li>
+        <a href="{{ route('hearings.index') }}" class="menu-item {{ request()->routeIs('hearings*') ? 'active' : '' }}">
+            <i class="fas fa-calendar-alt me-2"></i> Disciplinary Hearing Schedule
+        </a>
+    </li>
+    <li>
+        <a href="{{ route('infractions.index') }}" class="menu-item {{ request()->routeIs('infractions*') ? 'active' : '' }}">
+            <i class="fas fa-exclamation-triangle me-2"></i> Infraction Logging
+        </a>
+    </li>
+    <li>
+        <a href="{{ route('clearance_holds.index') }}" class="menu-item {{ request()->routeIs('clearance_holds*') ? 'active' : '' }}">
+            <i class="fas fa-ban me-2"></i> Clearance Hold Flagging
+        </a>
+    </li>
+    <li>
+        <a href="{{ route('notifications.parents') }}" class="menu-item {{ request()->routeIs('notifications*') ? 'active' : '' }}">
+            <i class="fas fa-envelope-open-text me-2"></i> Parent Notification Tool
+        </a>
+    </li>
+</ul>
+
 
             <div class="sidebar-footer">
                 <div class="user-info">

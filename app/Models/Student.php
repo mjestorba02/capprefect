@@ -12,7 +12,7 @@ class Student extends Model
     protected $primaryKey = 'student_id';
 
     protected $fillable = [
-        'fullname', 'program', 'year_level', 'status'
+        'fullname', 'program', 'year_level', 'status', 'parent_email'
     ];
 
     public function sanctions() {

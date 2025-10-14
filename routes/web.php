@@ -14,6 +14,7 @@ use App\Http\Controllers\ReformationProgramController;
 use App\Http\Controllers\InfractionController;
 use App\Http\Controllers\ClearanceHoldController;
 use App\Http\Controllers\HearingScheduleController;
+use App\Http\Controllers\ParentNotificationController;
 
 // Redirect to login
 Route::get('/', fn() => redirect()->route('login'));
@@ -28,7 +29,7 @@ Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard
 // Sanction Management
 Route::get('/sanctions', [SanctionController::class, 'index'])->name('sanctions.index');
 Route::post('/sanctions', [SanctionController::class, 'store'])->name('sanctions.store');
-Route::post('/sanctions/{id}', [SanctionController::class, 'update'])->name('sanctions.update');
+Route::put('/sanctions/{id}', [SanctionController::class, 'update'])->name('sanctions.update');
 Route::delete('/sanctions/{id}', [SanctionController::class, 'destroy'])->name('sanctions.destroy');
 
 //Violation Categories
@@ -64,3 +65,9 @@ Route::post('/clearance_holds/{id}/lift', [ClearanceHoldController::class, 'lift
 
 //Hearing Schedule
 Route::resource('hearings', HearingScheduleController::class);
+Route::post('/hearings/{hearing}', [HearingScheduleController::class, 'update'])->name('hearings.update');
+Route::get('/hearings/student-info/{id}', [HearingScheduleController::class, 'getStudentInfo'])
+    ->name('hearings.student-info');
+
+Route::get('/notifications/parents', [ParentNotificationController::class, 'index'])->name('notifications.parents');
+Route::post('/notifications/parents/notify', [ParentNotificationController::class, 'notify'])->name('notifications.parents.notify');

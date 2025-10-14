@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Sanction;
 use App\Models\Student;
+use App\Models\ViolationCategory;
 use Illuminate\Http\Request;
 
 class SanctionController extends Controller
@@ -11,7 +12,8 @@ class SanctionController extends Controller
     public function index() {
         $sanctions = Sanction::with('student')->paginate(10);
         $students = Student::all();
-        return view('sanctions.index', compact('sanctions', 'students'));
+        $violationCategories = ViolationCategory::where('status', 'active')->get();
+        return view('sanctions.index', compact('sanctions', 'students', 'violationCategories'));
     }
 
     public function store(Request $request) {

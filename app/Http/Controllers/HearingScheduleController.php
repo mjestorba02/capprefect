@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\HearingSchedule;
 use App\Models\Student;
 use App\Models\ViolationCategory;
+use App\Models\Sanction;
 use Illuminate\Http\Request;
 
 class HearingScheduleController extends Controller
@@ -12,7 +13,12 @@ class HearingScheduleController extends Controller
     public function index()
     {
         $hearings = HearingSchedule::with(['respondent', 'violation'])->paginate(10);
-        $students = Student::all();
+
+        // ✅ Only students who have sanctions
+        $students = Student::whereIn('student_id', function ($query) {
+            $query->select('student_id')->from('sanctions');
+        })->get();
+
         $violations = ViolationCategory::all();
 
         return view('hearings.index', compact('hearings', 'students', 'violations'));
@@ -22,8 +28,8 @@ class HearingScheduleController extends Controller
     {
         $request->validate([
             'respondent_id' => 'required|exists:students,student_id',
-            'violation_id' => 'required|exists:violation_categories,id',
             'complainant' => 'required|string|max:255',
+            'offense' => 'required|string|max:255',
             'date_of_hearing' => 'required|date',
             'time' => 'required',
             'venue' => 'required|string|max:255',
@@ -31,7 +37,13 @@ class HearingScheduleController extends Controller
             'status' => 'nullable|string|max:255',
         ]);
 
-        // Auto-generate record number like HS001
+        // ✅ Get violation from sanction record
+        $sanction = Sanction::where('student_id', $request->respondent_id)->first();
+        if (!$sanction) {
+            return redirect()->back()->with('error', 'Selected student has no sanction record.');
+        }
+
+        // ✅ Auto-generate record number (e.g., HS001)
         $latest = HearingSchedule::latest('id')->first();
         $nextNo = $latest ? $latest->id + 1 : 1;
         $recordNo = 'HS' . str_pad($nextNo, 3, '0', STR_PAD_LEFT);
@@ -39,8 +51,9 @@ class HearingScheduleController extends Controller
         HearingSchedule::create([
             'record_no' => $recordNo,
             'respondent_id' => $request->respondent_id,
-            'violation_id' => $request->violation_id,
+            'violation_id' => $sanction->category_id,
             'complainant' => $request->complainant,
+            'offense' => $request->offense,
             'date_of_hearing' => $request->date_of_hearing,
             'time' => $request->time,
             'venue' => $request->venue,
@@ -55,8 +68,8 @@ class HearingScheduleController extends Controller
     {
         $request->validate([
             'respondent_id' => 'required|exists:students,student_id',
-            'violation_id' => 'required|exists:violation_categories,id',
             'complainant' => 'required|string|max:255',
+            'offense' => 'required|string|max:255',
             'date_of_hearing' => 'required|date',
             'time' => 'required',
             'venue' => 'required|string|max:255',
@@ -64,10 +77,16 @@ class HearingScheduleController extends Controller
             'status' => 'nullable|string|max:255',
         ]);
 
+        $sanction = Sanction::where('student_id', $request->respondent_id)->first();
+        if (!$sanction) {
+            return redirect()->back()->with('error', 'Selected student has no sanction record.');
+        }
+
         $hearing->update([
             'respondent_id' => $request->respondent_id,
-            'violation_id' => $request->violation_id,
+            'violation_id' => $sanction->category_id,
             'complainant' => $request->complainant,
+            'offense' => $request->offense,
             'date_of_hearing' => $request->date_of_hearing,
             'time' => $request->time,
             'venue' => $request->venue,
@@ -82,5 +101,16 @@ class HearingScheduleController extends Controller
     {
         $hearing->delete();
         return redirect()->route('hearings.index')->with('success', 'Hearing schedule deleted successfully.');
+    }
+
+    public function getStudentInfo($id)
+    {
+        $student = Student::where('student_id', $id)->first();
+        $sanction = Sanction::where('student_id', $id)->latest()->first();
+
+        return response()->json([
+            'year_level' => $student->year_level ?? 'N/A',
+            'offense'     => $sanction->offense ?? 'N/A'
+        ]);
     }
 }

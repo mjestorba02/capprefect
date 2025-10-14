@@ -16,6 +16,7 @@ class HearingSchedule extends Model
         'respondent_id',
         'violation_id',
         'complainant',
+        'offense',
         'date_of_hearing',
         'time',
         'venue',

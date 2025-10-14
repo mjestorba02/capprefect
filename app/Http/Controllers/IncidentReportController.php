@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\IncidentReport;
 use App\Models\Student;
 use App\Models\Sanction;
+use App\Models\ViolationCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -14,7 +15,7 @@ class IncidentReportController extends Controller
     {
         $reports = IncidentReport::with(['student', 'category'])->paginate(10);
         $students = Student::all();
-        $categories = Sanction::all();
+        $categories = ViolationCategory::all();
 
         // Auto-generate next incident ID (e.g., IR001, IR002)
         $latest = IncidentReport::latest('id')->first();
@@ -22,6 +23,7 @@ class IncidentReportController extends Controller
 
         return view('incident_reports.index', compact('reports', 'students', 'categories', 'nextId'));
     }
+
 
     public function create()
     {

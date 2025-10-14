@@ -21,6 +21,28 @@
         </div>
     @endif
 
+    <div class="card shadow-sm border-0 mb-3">
+        <div class="card-body py-2">
+            <form method="GET" action="{{ route('infractions.index') }}" class="d-flex align-items-center gap-2">
+            <label class="fw-semibold text-secondary mb-0">Filter by Category:</label>
+            <select name="category" class="form-select form-select-sm" style="width: 220px;" onchange="this.form.submit()">
+                <option value="">All Categories</option>
+                @foreach($categories as $cat)
+                <option value="{{ $cat->category_name }}" 
+                    {{ isset($selectedCategory) && $selectedCategory == $cat->category_name ? 'selected' : '' }}>
+                    {{ $cat->category_name }}
+                </option>
+                @endforeach
+            </select>
+            @if(request('category'))
+                <a href="{{ route('infractions.index') }}" class="btn btn-sm btn-outline-secondary ms-2">
+                    <i class="fas fa-times"></i> Clear
+                </a>
+            @endif
+            </form>
+        </div>
+    </div>
+
     {{-- TABLE --}}
     <div class="card shadow-sm border-0">
         <div class="card-header bg-primary text-white">
