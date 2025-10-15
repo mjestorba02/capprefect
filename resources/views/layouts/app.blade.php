@@ -42,9 +42,10 @@
     <div id="mainApp" class="app-container">
         {{-- Sidebar --}}
         <nav class="sidebar">
-            <div class="sidebar-header">
-                <h2>Prefect</h2>
-                <p>Disciplinary Action System</p>
+            <div class="sidebar-header text-center p-3">
+                <img src="{{ asset('images/logo.jpg') }}" alt="Prefect Logo" class="mx-auto mb-2" style="width: 60px; height: 60px; border-radius: 50%;">
+                <h2 class="m-0 fw-bold">Prefect</h2>
+                <p class="text-muted small">Disciplinary Action System</p>
             </div>
             <ul class="sidebar-menu list-unstyled">
 

@@ -232,8 +232,9 @@
 
                 <label>Category</label>
                 <select id="edit_category_id" name="category_id" required>
+                    <option value="">Select Violation Category</option>
                     @foreach($categories as $cat)
-                        <option value="{{ $cat->sanction_id }}">{{ $cat->sanction_id }} - {{ $cat->offense }}</option>
+                        <option value="{{ $cat->id }}">{{ $cat->category_name }} ({{ ucfirst($cat->severity_level) }})</option>
                     @endforeach
                 </select>
 

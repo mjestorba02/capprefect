@@ -4,10 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\IncidentReport;
 use App\Models\Student;
-use App\Models\Sanction;
 use App\Models\ViolationCategory;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 use Barryvdh\DomPDF\Facade\Pdf;
 
 class IncidentReportController extends Controller
@@ -46,22 +44,14 @@ class IncidentReportController extends Controller
         return view('incident_reports.index', compact('reports', 'students', 'categories', 'nextId', 'from', 'to', 'categoryId'));
     }
 
-
-    public function create()
-    {
-        $students = Student::all();
-        $sanctions = Sanction::all();
-        return view('incident_reports.create', compact('students', 'sanctions'));
-    }
-
     public function store(Request $request)
     {
         $request->validate([
             'student_id' => 'required|exists:students,student_id',
-            'category_id' => 'required|exists:sanctions,sanction_id',
+            'category_id' => 'required|exists:violation_categories,id',
             'incident_date' => 'required|date',
             'location' => 'required|string|max:255',
-            'description' => 'required|string',
+            'description' => 'nullable|string',
             'reported_by' => 'required|string|max:255',
             'action_taken' => 'nullable|string|max:255',
             'status' => 'required|string|max:255',
@@ -72,42 +62,30 @@ class IncidentReportController extends Controller
         $nextIdNum = $lastReport ? ((int) filter_var($lastReport->incident_id, FILTER_SANITIZE_NUMBER_INT) + 1) : 1;
         $incidentId = 'IR' . str_pad($nextIdNum, 3, '0', STR_PAD_LEFT);
 
-        $incident = IncidentReport::create([
-            'incident_id'  => $incidentId,
-            'student_id'   => $request->student_id,
-            'category_id'  => $request->category_id,
-            'incident_date'=> $request->incident_date,
-            'location'     => $request->location,
-            'description'  => $request->description,
-            'reported_by'  => $request->reported_by,
-            'action_taken' => $request->action_taken,
-            'status'       => $request->status,
+        IncidentReport::create([
+            'incident_id'   => $incidentId,
+            'student_id'    => $request->student_id,
+            'category_id'   => $request->category_id,
+            'incident_date' => $request->incident_date,
+            'location'      => $request->location,
+            'description'   => $request->description,
+            'reported_by'   => $request->reported_by,
+            'action_taken'  => $request->action_taken,
+            'status'        => $request->status,
         ]);
 
         return redirect()->route('incident_reports.index')
             ->with('success', 'Incident report created successfully.');
     }
 
-    public function show(IncidentReport $incident_report)
-    {
-        return view('incident_reports.show', compact('incident_report'));
-    }
-
-    public function edit(IncidentReport $incident_report)
-    {
-        $students = Student::all();
-        $sanctions = Sanction::all();
-        return view('incident_reports.edit', compact('incident_report', 'students', 'sanctions'));
-    }
-
     public function update(Request $request, IncidentReport $incident_report)
     {
         $validated = $request->validate([
             'student_id' => 'sometimes|exists:students,student_id',
-            'category_id' => 'sometimes|exists:sanctions,sanction_id',
+            'category_id' => 'sometimes|exists:violation_categories,id',
             'incident_date' => 'sometimes|date',
             'location' => 'sometimes|string|max:255',
-            'description' => 'sometimes|string',
+            'description' => 'nullable|string',
             'reported_by' => 'sometimes|string|max:255',
             'action_taken' => 'nullable|string|max:255',
             'status' => 'sometimes|string|max:255',
@@ -115,13 +93,16 @@ class IncidentReportController extends Controller
 
         $incident_report->update($validated);
 
-        return redirect()->route('incident_reports.index')->with('success', 'Incident report updated successfully.');
+        return redirect()->route('incident_reports.index')
+            ->with('success', 'Incident report updated successfully.');
     }
 
     public function destroy(IncidentReport $incident_report)
     {
         $incident_report->delete();
-        return redirect()->route('incident_reports.index')->with('success', 'Incident report deleted successfully.');
+
+        return redirect()->route('incident_reports.index')
+            ->with('success', 'Incident report deleted successfully.');
     }
 
     public function export(Request $request)
@@ -146,7 +127,7 @@ class IncidentReportController extends Controller
 
         $reports = $query->orderBy('incident_date')->get();
 
-        // ✅ Using Barryvdh DomPDF facade properly
+        // ✅ DomPDF export
         $pdf = Pdf::loadView('incident_reports.export', compact('reports'))
             ->setPaper('a4', 'landscape');
 

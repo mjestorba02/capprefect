@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Prefect - Disciplinary Action System</title>
+
+    {{-- Styles --}}
     <link rel="stylesheet" href="{{ asset('styles/main.css') }}">
     <link rel="stylesheet" href="{{ asset('styles/forms.css') }}">
     <link rel="stylesheet" href="{{ asset('styles/dashboard.css') }}">
@@ -15,8 +17,10 @@
     <!-- Login Screen -->
     <div class="login-container">
         <div class="login-card">
-            <div class="login-header">
-                <i class="fas fa-user-shield login-icon"></i>
+            <div class="login-header text-center">
+                <img src="{{ asset('images/logo.jpg') }}" alt="Prefect Logo" 
+                     class="mx-auto mb-3" 
+                     style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover;">
                 <h1>Prefect</h1>
                 <p>Disciplinary Action System</p>
             </div>
