@@ -8,20 +8,42 @@ use App\Models\Sanction;
 use App\Models\ViolationCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class IncidentReportController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $reports = IncidentReport::with(['student', 'category'])->paginate(10);
         $students = Student::all();
         $categories = ViolationCategory::all();
 
-        // Auto-generate next incident ID (e.g., IR001, IR002)
+        // Filters
+        $categoryId = $request->input('category_id');
+        $from = $request->input('from');
+        $to = $request->input('to');
+
+        // Query with filters
+        $query = IncidentReport::with(['student', 'category']);
+
+        if ($categoryId) {
+            $query->where('category_id', $categoryId);
+        }
+
+        if ($from && $to) {
+            $query->whereBetween('incident_date', [$from, $to]);
+        } elseif ($from) {
+            $query->whereDate('incident_date', '>=', $from);
+        } elseif ($to) {
+            $query->whereDate('incident_date', '<=', $to);
+        }
+
+        $reports = $query->orderByDesc('incident_date')->paginate(10)->withQueryString();
+
+        // Auto-generate next ID
         $latest = IncidentReport::latest('id')->first();
         $nextId = $latest ? $latest->id + 1 : 1;
 
-        return view('incident_reports.index', compact('reports', 'students', 'categories', 'nextId'));
+        return view('incident_reports.index', compact('reports', 'students', 'categories', 'nextId', 'from', 'to', 'categoryId'));
     }
 
 
@@ -100,5 +122,34 @@ class IncidentReportController extends Controller
     {
         $incident_report->delete();
         return redirect()->route('incident_reports.index')->with('success', 'Incident report deleted successfully.');
+    }
+
+    public function export(Request $request)
+    {
+        $categoryId = $request->input('category_id');
+        $from = $request->input('from');
+        $to = $request->input('to');
+
+        $query = IncidentReport::with(['student', 'category']);
+
+        if ($categoryId) {
+            $query->where('category_id', $categoryId);
+        }
+
+        if ($from && $to) {
+            $query->whereBetween('incident_date', [$from, $to]);
+        } elseif ($from) {
+            $query->whereDate('incident_date', '>=', $from);
+        } elseif ($to) {
+            $query->whereDate('incident_date', '<=', $to);
+        }
+
+        $reports = $query->orderBy('incident_date')->get();
+
+        // ✅ Using Barryvdh DomPDF facade properly
+        $pdf = Pdf::loadView('incident_reports.export', compact('reports'))
+            ->setPaper('a4', 'landscape');
+
+        return $pdf->download('incident_reports_' . now()->format('Ymd_His') . '.pdf');
     }
 }

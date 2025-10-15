@@ -21,7 +21,7 @@
         <nav class="sidebar">
             <div class="sidebar-header">
                 <h2>Prefect</h2>
-                <p>Student Management System</p>
+                <p>Disciplinary Action System</p>
             </div>
             <ul class="sidebar-menu list-unstyled">
 

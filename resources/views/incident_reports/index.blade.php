@@ -25,6 +25,44 @@
             </div>
         @endif
 
+        {{-- === FILTERS === --}}
+        <div class="card mb-4 shadow-sm border-0">
+            <div class="card-body">
+                <form method="GET" action="{{ route('incident_reports.index') }}" class="row g-3 align-items-end">
+                    <div class="col-md-3">
+                        <label for="from" class="form-label">From</label>
+                        <input type="date" name="from" id="from" class="form-control" value="{{ request('from') }}">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="to" class="form-label">To</label>
+                        <input type="date" name="to" id="to" class="form-control" value="{{ request('to') }}">
+                    </div>
+                    <div class="col-md-3">
+                        <label for="category_id" class="form-label">Category</label>
+                        <select name="category_id" id="category_id" class="form-select">
+                            <option value="">All Categories</option>
+                            @foreach($categories as $cat)
+                                <option value="{{ $cat->id }}" {{ request('category_id') == $cat->id ? 'selected' : '' }}>
+                                    {{ $cat->category_name }} ({{ ucfirst($cat->severity_level) }})
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div class="col-md-3 d-flex gap-2">
+                        <button type="submit" class="btn btn-primary flex-fill">
+                            <i class="fas fa-filter me-1"></i> Filter
+                        </button>
+                        <a href="{{ route('incident_reports.export', request()->query()) }}" class="btn btn-danger flex-fill">
+                            <i class="fas fa-file-pdf me-1"></i> Export PDF
+                        </a>
+                        <a href="{{ route('incident_reports.index') }}" class="btn btn-secondary flex-fill">
+                            <i class="fas fa-undo me-1"></i> Reset
+                        </a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
         {{-- === INCIDENT REPORTS TABLE === --}}
         <div class="card shadow border-0">
             <div class="card-header bg-primary text-white">

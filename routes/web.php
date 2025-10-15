@@ -37,6 +37,8 @@ Route::resource('violation_categories', ViolationCategoryController::class);
 
 //Incident Reports
 Route::resource('incident_reports', IncidentReportController::class);
+Route::get('/incident-reports/export', [IncidentReportController::class, 'export'])
+    ->name('incident_reports.export');
 
 //Behavior Management
 Route::resource('behaviors', BehaviorController::class);

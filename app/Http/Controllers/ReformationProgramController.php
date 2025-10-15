@@ -27,10 +27,26 @@ class ReformationProgramController extends Controller
             'status' => 'required|string|max:255',
         ]);
 
-        $nextId = ReformationProgram::count() + 1;
-        $program_id = 'RP' . str_pad($nextId, 3, '0', STR_PAD_LEFT);
+        // 🔹 Find the latest existing program_id (e.g., RP001, RP002, etc.)
+        $lastProgram = \App\Models\ReformationProgram::orderBy('program_id', 'desc')->first();
 
-        ReformationProgram::create([
+        if ($lastProgram && preg_match('/RP(\d+)/', $lastProgram->program_id, $matches)) {
+            $nextNumber = intval($matches[1]) + 1;
+        } else {
+            $nextNumber = 1; // Start from RP001 if no records exist
+        }
+
+        // 🔹 Generate new program_id safely
+        $program_id = 'RP' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+
+        // 🔹 Double-check if it already exists (in case of race condition)
+        while (\App\Models\ReformationProgram::where('program_id', $program_id)->exists()) {
+            $nextNumber++;
+            $program_id = 'RP' . str_pad($nextNumber, 3, '0', STR_PAD_LEFT);
+        }
+
+        // 🔹 Create the record
+        \App\Models\ReformationProgram::create([
             'program_id' => $program_id,
             'program_name' => $request->program_name,
             'description' => $request->description,
@@ -40,7 +56,8 @@ class ReformationProgramController extends Controller
             'status' => $request->status,
         ]);
 
-        return redirect()->route('reformation_programs.index')->with('success', 'Reformation program added successfully.');
+        return redirect()->route('reformation_programs.index')
+            ->with('success', 'Reformation program added successfully.');
     }
 
     public function update(Request $request, ReformationProgram $reformation_program)
